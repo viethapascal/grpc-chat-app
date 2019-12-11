@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package proto;
+import "google/api/annotations.proto"
+message User {
+    string id = 1;
+    string display_name = 2;
+    string username = 3;
+    string passwod = 4;
+
+    googlge
+}
+
+message Message {
+    string id = 1;
+    User user = 2;
+    string message = 3;
+    string timestamp = 4;
+}
+
+message Connect {
+    User user = 1;
+    bool active = 2;
+}
+
+message Close{}
+service Broadcast {
+    rpc RegisterUser(User)
+    rpc CreateStream(Connect) returns (stream Message);
+    rpc BroadcastMessage(Message) returns (Close);
+}
