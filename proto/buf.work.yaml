@@ -1,0 +1,4 @@
+version: v1
+# THIS IS INVALID AND RESULTS IN A PRE-COMPILATION ERROR
+directories:
+  - ./
