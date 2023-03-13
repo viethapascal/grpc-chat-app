@@ -1,0 +1,22 @@
+version: v1
+plugins:
+  - name: js
+    out: ../
+    opt: import_style=commonjs,binary
+  - name: grpc
+    out: ../
+    opt: grpc_js
+    path: grpc_tools_node_protoc_plugin
+  - plugin: ts
+    out: ../
+    opt:
+      - paths=source_relative
+      - service=grpc-web
+      - import_style=commonjs+dts
+      - grpc_js
+  - plugin: grpc-gateway-ts
+    out: ../
+    opt:
+      - import_style=commonjs+dts
+      - path=source_relative
+    strategy: all

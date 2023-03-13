@@ -22,11 +22,11 @@ func init() {
 	wait = &sync.WaitGroup{}
 }
 
-func connect(user *proto.User) (error) {
+func connect(user *proto.User) error {
 	var streamError error
 	fmt.Println(*user)
 	stream, err := client.CreateStream(context.Background(), &proto.Connect{
-		User: user,
+		User:   user,
 		Active: true,
 	})
 
@@ -39,7 +39,7 @@ func connect(user *proto.User) (error) {
 	go func(str proto.Broadcast_CreateStreamClient) {
 		defer wait.Done()
 
-		for  {
+		for {
 			msg, err := str.Recv()
 
 			if err != nil {
@@ -60,15 +60,17 @@ func main() {
 	done := make(chan int)
 
 	name := flag.String("N", "Anonymous", "")
+	port := flag.Int("p", 17017, "")
+	host := flag.String("h", "localhost", "")
 	flag.Parse()
 
 	id := sha256.Sum256([]byte(ts.String() + *name))
 	user := &proto.User{
-		Id : hex.EncodeToString(id[:]),
+		Id:          hex.EncodeToString(id[:]),
 		DisplayName: *name,
 	}
 
-	conn, err := grpc.Dial("localhost:17100", grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf("%v:%d", *host, *port), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect to server %v", err)
 	}
@@ -88,9 +90,9 @@ func main() {
 		msgID := sha256.Sum256([]byte(ts.String() + *name))
 		for scanner.Scan() {
 			msg := &proto.Message{
-				Id: hex.EncodeToString(msgID[:]),
-				User: user,
-				Message: scanner.Text(),
+				Id:        hex.EncodeToString(msgID[:]),
+				User:      user,
+				Message:   scanner.Text(),
 				Timestamp: ts.String(),
 			}
 
@@ -109,4 +111,3 @@ func main() {
 
 	<-done
 }
-

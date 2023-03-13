@@ -1,14 +1,12 @@
 syntax = "proto3";
 
 package proto;
-import "google/api/annotations.proto"
+import  "google/api/annotations.proto";
+option go_package = "github.com/grpc-chat-app/gen-pb";
+
 message User {
     string id = 1;
     string display_name = 2;
-    string username = 3;
-    string passwod = 4;
-
-    googlge
 }
 
 message Message {
@@ -24,8 +22,39 @@ message Connect {
 }
 
 message Close{}
+
+// The request message containing the user's name
+message EchoRequest {
+    string name = 1;
+}
+
+// The response message containing the greetings
+message EchoReply {
+    string message = 1;
+}
 service Broadcast {
-    rpc RegisterUser(User)
-    rpc CreateStream(Connect) returns (stream Message);
-    rpc BroadcastMessage(Message) returns (Close);
+    rpc Echo(EchoRequest) returns (EchoReply) {
+        option (google.api.http) = {
+            post: "/v1/echo"
+            body: "*"
+        };
+    };
+    rpc RegisterUser(User) returns (Close) {
+        option (google.api.http) = {
+            post: "/v1/example/echo"
+            body: "*"
+        };
+    };
+    rpc CreateStream(Connect) returns (stream Message) {
+        option (google.api.http) = {
+            post: "/v1/join"
+            body: "*"
+        };
+    };
+    rpc BroadcastMessage(Message) returns (Close) {
+        option (google.api.http) = {
+            post: "/v1/send"
+            body: "*"
+        };
+    };
 }
