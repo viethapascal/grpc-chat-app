@@ -114,13 +114,13 @@ func main() {
 	go func() {
 		log.Fatalln(grpcServer.Serve(listener))
 	}()
-	log.Println("Serving gRPC on 0.0.0.0:8080")
+	log.Printf("Serving gRPC on 0.0.0.0:%v", port)
 
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
-		"0.0.0.0:8080",
+		fmt.Sprintf("0.0.0.0:%d", port),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
